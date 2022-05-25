@@ -1266,26 +1266,11 @@ pqAppendCmdQueueEntry(PGconn *conn, PGcmdQueueEntry *entry)
 	{
 		case PQ_PIPELINE_OFF:
 		case PQ_PIPELINE_ON:
-
-			/*
-			 * When not in pipeline aborted state, if there's a result ready
-			 * to be consumed, let it be so (that is, don't change away from
-			 * READY or READY_MORE); otherwise set us busy to wait for
-			 * something to arrive from the server.
-			 */
 			if (conn->asyncStatus == PGASYNC_IDLE)
 				conn->asyncStatus = PGASYNC_BUSY;
 			break;
 
 		case PQ_PIPELINE_ABORTED:
-
-			/*
-			 * In aborted pipeline state, we don't expect anything from the
-			 * server (since we don't send any queries that are queued).
-			 * Therefore, if IDLE then do what PQgetResult would do to let
-			 * itself consume commands from the queue; if we're in any other
-			 * state, we don't have to do anything.
-			 */
 			if (conn->asyncStatus == PGASYNC_IDLE)
 			{
 				resetPQExpBuffer(&conn->errorMessage);
