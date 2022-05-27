@@ -1820,7 +1820,6 @@ PQsendQueryStartThread(PGconn *conn, bool newQuery)
 		return false;
 	}
 
-	/* Can't send while already busy, either, unless enqueuing for later */
 	if (conn->asyncStatus != PGASYNC_IDLE &&
 		conn->pipelineStatus == PQ_PIPELINE_OFF)
 	{
